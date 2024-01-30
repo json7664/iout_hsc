@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/jihans/Desktop/General/C++/Qformat_stuff/build",
+  "command": "/usr/bin/clang++ -I/Users/jihans/Desktop/General/C++/Qformat_stuff/includes -I/Library/Frameworks/SDL2.framework/Headers -F/Library/Frameworks -g -std=gnu++2b -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -o CMakeFiles/test.dir/src/main.cpp.o -c /Users/jihans/Desktop/General/C++/Qformat_stuff/src/main.cpp",
+  "file": "/Users/jihans/Desktop/General/C++/Qformat_stuff/src/main.cpp",
+  "output": "CMakeFiles/test.dir/src/main.cpp.o"
+}
+]
