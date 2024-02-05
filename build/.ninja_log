@@ -1,3 +1,13 @@
 # ninja log v5
-5	256	1706594364287915016	CMakeFiles/test.dir/src/main.cpp.o	d2db7c148ca31844
-256	2284	1706594366317269448	/Users/jihans/Desktop/General/C++/Qformat_stuff/bin/test	5ebbfdf10a92a784
+6	287	1707018639969997734	CMakeFiles/test.dir/src/main.cpp.o	d2db7c148ca31844
+287	331	1707018640015351243	/Users/jihans/Desktop/General/C++/Qformat_stuff/bin/test	5ebbfdf10a92a784
+4	278	1707159936514843794	CMakeFiles/test.dir/src/main.cpp.o	d2db7c148ca31844
+278	2262	1707159938501007962	/Users/jihans/Desktop/General/C++/Qformat_stuff/bin/test	5ebbfdf10a92a784
+4	251	1707160260240974510	CMakeFiles/test.dir/src/main.cpp.o	d2db7c148ca31844
+252	292	1707160260282323368	/Users/jihans/Desktop/General/C++/Qformat_stuff/bin/test	5ebbfdf10a92a784
+4	250	1707160626753409818	CMakeFiles/test.dir/src/main.cpp.o	d2db7c148ca31844
+250	289	1707160626793913841	/Users/jihans/Desktop/General/C++/Qformat_stuff/bin/test	5ebbfdf10a92a784
+4	248	1707160963440562257	CMakeFiles/test.dir/src/main.cpp.o	d2db7c148ca31844
+248	290	1707160963482985285	/Users/jihans/Desktop/General/C++/Qformat_stuff/bin/test	5ebbfdf10a92a784
+5	259	1707161101100585605	CMakeFiles/test.dir/src/main.cpp.o	d2db7c148ca31844
+259	297	1707161101140304918	/Users/jihans/Desktop/General/C++/Qformat_stuff/bin/test	5ebbfdf10a92a784
