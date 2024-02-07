@@ -5,6 +5,8 @@ using namespace std;
 
 USER_DATA_t user_data;
 
+#define PMBUS_Q_EXP -16
+
 int main()
 {
     initialize_data();
@@ -32,13 +34,13 @@ int main()
 
     if (-user_data.vout_exponent > -IOUT_temp_exp)
     {
-        Iout_init_mantissa = SHIFT_EXPONENT(IOUT_temp_mantissa, -(user_data.vout_exponent - IOUT_temp_exp)) - user_data.vout_mantissa;
-        Iout_init_exp = user_data.vout_exponent;
+        Iout_init_mantissa = (SHIFT_EXPONENT(IOUT_temp_mantissa, -((PMBUS_Q_EXP - user_data.vout_exponent) - IOUT_temp_exp)) - user_data.vout_mantissa) >> 4;
+        Iout_init_exp = (PMBUS_Q_EXP - user_data.vout_exponent) + 4;
     }
     else
     {
-        Iout_init_mantissa = IOUT_temp_mantissa - SHIFT_EXPONENT(user_data.vout_mantissa, -(IOUT_temp_exp - user_data.vout_exponent));
-        Iout_init_exp = IOUT_temp_exp;
+        Iout_init_mantissa = (IOUT_temp_mantissa - SHIFT_EXPONENT(user_data.vout_mantissa, -(IOUT_temp_exp - (PMBUS_Q_EXP -user_data.vout_exponent)))) >> 4;
+        Iout_init_exp = IOUT_temp_exp + 4;
     }
 
     uint16_t L11_IOUT_init = (uint16_t)((TWOS_COMPLEMENT(5, Iout_init_exp) << 11) | (Iout_init_mantissa & 0x7ff));
@@ -47,25 +49,31 @@ int main()
 
     int32_t Iout_mantissa;
     int32_t Iout_exp;
-
+    int32_t rout1 = SHIFT_EXPONENT(rout_mantissa, -(rout_exponent - Iout_init_exp));
     if (-rout_exponent > -Iout_init_exp)
     {
-        Iout_mantissa = (Iout_init_mantissa << 6) / SHIFT_EXPONENT(rout_mantissa, -(rout_exponent - Iout_init_exp));
+        Iout_mantissa = SHIFT_EXPONENT(Iout_init_mantissa, -(rout_exponent - Iout_init_exp)) / (rout_mantissa >> 5);
     }
     else
     {
-        Iout_mantissa = (Iout_init_mantissa << 6) / SHIFT_EXPONENT(rout_mantissa, -(Iout_init_exp - rout_exponent));
+        Iout_mantissa = (Iout_init_mantissa) / rout1;
     }
+    cout << "rout1: " << rout1 << endl;
+    cout << "Iout_mantissa: " << Iout_mantissa << endl;
 
-    cout << hex << (uint16_t)((TWOS_COMPLEMENT(5, -6) << 11) | (Iout_mantissa & 0x7ff)) << endl;
+    cout << hex << (uint16_t)((TWOS_COMPLEMENT(5, -5) << 11) | ((Iout_mantissa)& 0x7ff)) << endl;
 
-    Iout_exp = -10;
+    Iout_exp = -5;
 
-    int32_t Iout_mantissa_A = Iout_mantissa * 1000;
+    uint32_t thousand = 0x10FA;
+    uint32_t thousand_mantissa = LINEAR11_TO_MANTISSA(thousand);
+    uint32_t thousand_exponent = LINEAR11_TO_EXPONENT(thousand);
 
-    Iout_mantissa_A = Iout_mantissa_A >> 4;
+    int32_t Iout_mantissa_A = (Iout_mantissa * thousand_mantissa) >> 5;
 
-    int32_t Iout_exp_A = Iout_exp + 4;
+    // Iout_mantissa_A = Iout_mantissa_A >> 4;
+
+    int32_t Iout_exp_A = Iout_exp + 5 + thousand_exponent; 
 
     uint16_t L11_IOUT = (uint16_t)((TWOS_COMPLEMENT(5, Iout_exp_A) << 11) | (Iout_mantissa_A & 0x7ff));
 
@@ -151,46 +159,46 @@ u_int8_t TWOS_COMPLEMENT(uint8_t numbits, int32_t exp)
 
 void initialize_data()
 {
-    cout << "LINEAR11 tempco value: \t";
-    cin >> user_data.get_tempco;
-    cout << endl;
+    // cout << "LINEAR11 tempco value: \t";
+    // cin >> user_data.get_tempco;
+    // cout << endl;
 
-    cout << "LINEAR11 temperature value: \t";
-    cin >> user_data.get_temp;
-    cout << endl;
+    // cout << "LINEAR11 temperature value: \t";
+    // cin >> user_data.get_temp;
+    // cout << endl;
 
-    cout << "LINEAR11 R25 value: \t";
-    cin >> user_data.get_R25;
-    cout << endl;
+    // cout << "LINEAR11 R25 value: \t";
+    // cin >> user_data.get_R25;
+    // cout << endl;
 
-    cout << "LINEAR11 turnsratio value: \t";
-    cin >> user_data.get_turnsratio;
-    cout << endl;
+    // cout << "LINEAR11 turnsratio value: \t";
+    // cin >> user_data.get_turnsratio;
+    // cout << endl;
 
-    cout << "LINEAR11 vin value: \t";
-    cin >> user_data.get_vin;
-    cout << endl;
+    // cout << "LINEAR11 vin value: \t";
+    // cin >> user_data.get_vin;
+    // cout << endl;
 
-    cout << "LINEAR11 vout value: \t";
-    cin >> user_data.get_vout;
-    cout << endl;
+    // cout << "LINEAR11 vout value: \t";
+    // cin >> user_data.get_vout;
+    // cout << endl;
 
-    user_data.tempco_mantissa = LINEAR11_TO_MANTISSA(user_data.get_tempco);
-    user_data.tempco_exponent = LINEAR11_TO_EXPONENT(user_data.get_tempco);
+    user_data.tempco_mantissa = LINEAR11_TO_MANTISSA(49153);
+    user_data.tempco_exponent = LINEAR11_TO_EXPONENT(49153);
 
-    user_data.temp_mantissa = LINEAR11_TO_MANTISSA(user_data.get_temp);
-    user_data.temp_exponent = LINEAR11_TO_EXPONENT(user_data.get_temp);
+    user_data.temp_mantissa = LINEAR11_TO_MANTISSA(40);
+    user_data.temp_exponent = LINEAR11_TO_EXPONENT(40);
     user_data.temperature = SHIFT_EXPONENT(user_data.temp_mantissa, user_data.temp_exponent);
 
-    user_data.r25_mantissa = LINEAR11_TO_MANTISSA(user_data.get_R25);
-    user_data.r25_exponent = LINEAR11_TO_EXPONENT(user_data.get_R25);
+    user_data.r25_mantissa = LINEAR11_TO_MANTISSA(61470);
+    user_data.r25_exponent = LINEAR11_TO_EXPONENT(61470);
 
-    user_data.turnsratio_mantissa = LINEAR11_TO_MANTISSA(user_data.get_turnsratio);
-    user_data.turnsratio_exponent = LINEAR11_TO_EXPONENT(user_data.get_turnsratio);
+    user_data.turnsratio_mantissa = LINEAR11_TO_MANTISSA(49680);
+    user_data.turnsratio_exponent = LINEAR11_TO_EXPONENT(49680);
 
-    user_data.vin_mantissa = LINEAR11_TO_MANTISSA(user_data.get_vin);
-    user_data.vin_exponent = LINEAR11_TO_EXPONENT(user_data.get_vin);
+    user_data.vin_mantissa = LINEAR11_TO_MANTISSA(61635);
+    user_data.vin_exponent = LINEAR11_TO_EXPONENT(61635);
 
-    user_data.vout_mantissa = LINEAR11_TO_MANTISSA(user_data.get_vout);
-    user_data.vout_exponent = LINEAR11_TO_EXPONENT(user_data.get_vout);
+    user_data.vout_mantissa = 912;
+    user_data.vout_exponent = -8;
 }
